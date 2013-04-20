@@ -1,0 +1,4 @@
+a.txt
+dir1/b.txt
+dir1/dir2/c.txt
+dir1b
