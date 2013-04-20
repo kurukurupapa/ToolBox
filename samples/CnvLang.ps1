@@ -1,5 +1,5 @@
 # Windows PowerShell
-# テキストファイルの文字コードを変換するサンプルです。
+# テキストファイルの文字コードを変換するスクリプトです。
 
 param($inPath, $outDir)
 
