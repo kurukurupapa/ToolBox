@@ -4,12 +4,11 @@
 # 2013/04/04 新規作成
 
 Set-StrictMode -Version Latest
-$PSDefaultParameterValues = @{"ErrorAction"="Stop"}
 $ErrorActionPreference = "Stop"
 $WarningPreference = "Continue"
-$DebugPreference = "Continue"
-$basedir = Convert-Path $(Split-Path $MyInvocation.InvocationName -Parent)
-$psname = Split-Path $MyInvocation.InvocationName -Leaf
+#$DebugPreference = "Continue"
+$baseDir = Convert-Path $(Split-Path $MyInvocation.InvocationName -Parent)
+$psName = Split-Path $MyInvocation.InvocationName -Leaf
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 
 ######################################################################
@@ -120,8 +119,7 @@ function U-Unarchive-File($srcPath, $destDir) {
         
         # GnuWin32のunzip.exeを使って展開する
         # ・上書き
-        # ・処理が終わるまで待機
-        Start-Process $unzipPath -ArgumentList -o, $srcPath, -d, $destDir -Wait -WindowStyle Minimized
+        Invoke-Expression "$unzipPath -o $srcPath -d $destDir"
     } else {
         New-Item -ItemType directory -Force $destDir | Out-Null
         
@@ -226,7 +224,9 @@ $targetList = @( `
     "sort.exe",
     "whoami.exe")
 foreach($target in $targetList) {
-    Rename-Item "${destDir}\bin\${target}" "${destDir}\bin\_${target}"
+    if (Test-Path "${destDir}\bin\${target}") {
+        Rename-Item "${destDir}\bin\${target}" "${destDir}\bin\_${target}"
+    }
 }
 
 # Ruby
