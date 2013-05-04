@@ -119,6 +119,8 @@ function U-Unarchive-File($srcPath, $destDir) {
         
         # GnuWin32のunzip.exeを使って展開する
         # ・上書き
+        # ・処理が終わるまで待機
+        #Start-Process $unzipPath -ArgumentList -o, $srcPath, -d, $destDir -Wait -WindowStyle Minimized
         Invoke-Expression "$unzipPath -o $srcPath -d $destDir"
     } else {
         New-Item -ItemType directory -Force $destDir | Out-Null
@@ -154,9 +156,12 @@ function U-Remove-Dir($dir) {
 # $dir - 追加するディレクトリ
 # return - なし
 function U-AddTo-PathEnv($dir) {
-    if ($env:path -notlike $("*" + $dir + "*")) {
-        $env:path = $env:path + ";" + $dir
-        [System.Environment]::SetEnvironmentVariable("Path", $env:path, [System.EnvironmentVariableTarget]::User)
+    $pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
+    Write-Debug "環境変数Path変更前=[$pathEnv]"
+    if ($pathEnv -notlike $("*" + $dir + "*")) {
+        $pathEnv = $pathEnv + ";" + $dir
+        [System.Environment]::SetEnvironmentVariable("Path", $pathEnv, [System.EnvironmentVariableTarget]::User)
+        Write-Debug "環境変数Path変更後=[$pathEnv]"
     }
     return
 }
