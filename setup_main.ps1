@@ -259,7 +259,7 @@ U-Setup-Archive `
 ###
 
 # Ant
-$antDir = Join-Path $toolDir "apache-ant-1.9.0"
+$antDir = Join-Path $toolDir "apache-ant-1.9.2"
 U-Setup-Archive `
     -srcUrl "http://ftp.kddilabs.jp/infosystems/apache/ant/binaries/apache-ant-1.9.2-bin.zip" `
     -destDir $antDir
