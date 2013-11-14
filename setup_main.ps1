@@ -159,9 +159,13 @@ function U-AddTo-PathEnv($dir) {
     $pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
     Write-Debug "環境変数Path変更前=[$pathEnv]"
     if ($pathEnv -notlike $("*" + $dir + "*")) {
-        $pathEnv = $pathEnv + ";" + $dir
-        [System.Environment]::SetEnvironmentVariable("Path", $pathEnv, [System.EnvironmentVariableTarget]::User)
-        Write-Debug "環境変数Path変更後=[$pathEnv]"
+        #$pathEnv = $pathEnv + ";" + $dir
+        #[System.Environment]::SetEnvironmentVariable("Path", $pathEnv, [System.EnvironmentVariableTarget]::User)
+        #Write-Debug "環境変数Path変更後=[$pathEnv]"
+        Write-Output "-----------------------------------"
+        Write-Output "必要に応じて環境変数PATHへ次のディレクトリを追加してください。"
+        Write-Output "$dir"
+        Write-Output "-----------------------------------"
     }
     return
 }
@@ -257,7 +261,7 @@ U-Setup-Archive `
 # Ant
 $antDir = Join-Path $toolDir "apache-ant-1.9.0"
 U-Setup-Archive `
-    -srcUrl "http://ftp.kddilabs.jp/infosystems/apache/ant/binaries/apache-ant-1.9.0-bin.zip" `
+    -srcUrl "http://ftp.kddilabs.jp/infosystems/apache/ant/binaries/apache-ant-1.9.2-bin.zip" `
     -destDir $antDir
 
 # Jakarta ORO
