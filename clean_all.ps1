@@ -29,9 +29,9 @@ Get-ChildItem $basedir | ?{$_.PSIsContainer} |
 }
 
 # PATH環境変数から不要な設定を削除
-$items = $($env:Path.Split(";") | Select-String -NotMatch -SimpleMatch $baseDir)
-$env:Path = $items -join ";"
-[System.Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::User)
+#$items = $($env:Path.Split(";") | Select-String -NotMatch -SimpleMatch $baseDir)
+#$env:Path = $items -join ";"
+#[System.Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::User)
 Write-Output "-----------------------------------"
 Write-Output "必要に応じて環境変数PATHから次のディレクトリを削除してください。"
 Write-Output "$baseDir"
