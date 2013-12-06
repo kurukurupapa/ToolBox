@@ -52,15 +52,16 @@ function U-Setup-Archive($srcUrl, $destDir, $fname = $null, $destCheck = $null) 
         
         # アーカイブファイルを展開する
         U-Unarchive-File -srcPath $tmpPath -destDir $destDir
-        
-        # binディレクトリがあればパスを通す
-        $binDir = Join-Path $destDir "bin"
-        if (Test-Path $binDir) {
-            U-AddTo-PathEnv $binDir
-        }
     } else {
         echo "スキップ $srcUrl"
     }
+    
+    # binディレクトリがあればパスを通す
+    $binDir = Join-Path $destDir "bin"
+    if (Test-Path $binDir) {
+        U-AddTo-PathEnv $binDir
+    }
+    
     return
 }
 
@@ -156,9 +157,9 @@ function U-Remove-Dir($dir) {
 # $dir - 追加するディレクトリ
 # return - なし
 function U-AddTo-PathEnv($dir) {
-    #$pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
+    $pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
     #Write-Debug "環境変数Path変更前=[$pathEnv]"
-    #if ($pathEnv -notlike $("*" + $dir + "*")) {
+    if ($pathEnv -notlike $("*" + $dir + "*")) {
         #$pathEnv = $pathEnv + ";" + $dir
         #[System.Environment]::SetEnvironmentVariable("Path", $pathEnv, [System.EnvironmentVariableTarget]::User)
         #Write-Debug "環境変数Path変更後=[$pathEnv]"
@@ -166,14 +167,14 @@ function U-AddTo-PathEnv($dir) {
         #Write-Output "必要に応じて環境変数PATHへ次のディレクトリを追加してください。"
         #Write-Output "$dir"
         #Write-Output "-----------------------------------"
-    #}
-    $tmpPath = $toolsPath
-    if ($tmpPath -notlike $("*" + $dir + "*")) {
-        if ($tmpPath -ne "") {
-            $tmpPath = $tmpPath + ";"
+        $tmpPath = $global:toolsPath
+        if ($tmpPath -notlike $("*" + $dir + "*")) {
+            if ($tmpPath -ne "") {
+                $tmpPath = $tmpPath + ";"
+            }
+            $tmpPath = $tmpPath + $dir
+            $global:toolsPath = $tmpPath
         }
-        $tmpPath = $tmpPath + $dir
-        $global:toolsPath = $tmpPath
     }
     Write-Output "実行ディレクトリ：$dir"
     return
