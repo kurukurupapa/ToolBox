@@ -6,7 +6,7 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 $WarningPreference = "Continue"
-#$DebugPreference = "Continue"
+$DebugPreference = "Continue"
 $baseDir = Convert-Path $(Split-Path $MyInvocation.InvocationName -Parent)
 $psName = Split-Path $MyInvocation.InvocationName -Leaf
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
@@ -156,18 +156,36 @@ function U-Remove-Dir($dir) {
 # $dir - 追加するディレクトリ
 # return - なし
 function U-AddTo-PathEnv($dir) {
-    $pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
-    Write-Debug "環境変数Path変更前=[$pathEnv]"
-    if ($pathEnv -notlike $("*" + $dir + "*")) {
+    #$pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
+    #Write-Debug "環境変数Path変更前=[$pathEnv]"
+    #if ($pathEnv -notlike $("*" + $dir + "*")) {
         #$pathEnv = $pathEnv + ";" + $dir
         #[System.Environment]::SetEnvironmentVariable("Path", $pathEnv, [System.EnvironmentVariableTarget]::User)
         #Write-Debug "環境変数Path変更後=[$pathEnv]"
+        #Write-Output "-----------------------------------"
+        #Write-Output "必要に応じて環境変数PATHへ次のディレクトリを追加してください。"
+        #Write-Output "$dir"
+        #Write-Output "-----------------------------------"
+    #}
+    $tmpPath = $toolsPath
+    if ($tmpPath -notlike $("*" + $dir + "*")) {
+        if ($tmpPath -ne "") {
+            $tmpPath = $tmpPath + ";"
+        }
+        $tmpPath = $tmpPath + $dir
+        $global:toolsPath = $tmpPath
+    }
+    Write-Output "実行ディレクトリ：$dir"
+    return
+}
+
+function U-Print-PathEnv() {
+    if ($toolsPath -ne "") {
         Write-Output "-----------------------------------"
-        Write-Output "必要に応じて環境変数PATHへ次のディレクトリを追加してください。"
-        Write-Output "$dir"
+        Write-Output "必要に応じて、次のディレクトリを環境変数PATHに追加してください。"
+        Write-Output "$toolsPath"
         Write-Output "-----------------------------------"
     }
-    return
 }
 
 ######################################################################
@@ -185,6 +203,9 @@ Push-Location $baseDir
 New-Item -ItemType directory -Force $arcDir | Out-Null
 New-Item -ItemType directory -Force $toolDir | Out-Null
 New-Item -ItemType directory -Force $userDir | Out-Null
+
+# 実行ディレクトリ
+$global:toolsPath = ""
 
 ###
 ### コマンド・言語
@@ -206,6 +227,8 @@ $gnuwinList = @( `
     @("http://sourceforge.net/projects/gnuwin32/files/grep/2.5.4/grep-2.5.4-dep.zip", $(Join-Path $destDir "bin\grep.exe")),
     @("http://sourceforge.net/projects/gnuwin32/files/grep/2.5.4/grep-2.5.4-bin.zip", $(Join-Path $destDir "bin\grep.exe")),
     @("http://sourceforge.net/projects/gnuwin32/files/gzip/1.3.12-1/gzip-1.3.12-1-bin.zip", $(Join-Path $destDir "bin\gzip.exe")),
+    @("http://sourceforge.net/projects/gnuwin32/files/libiconv/1.9.2-1/libiconv-1.9.2-1-dep.zip", $(Join-Path $destDir "bin\iconv.exe")),
+    @("http://sourceforge.net/projects/gnuwin32/files/libiconv/1.9.2-1/libiconv-1.9.2-1-bin.zip", $(Join-Path $destDir "bin\iconv.exe")),
     @("http://sourceforge.net/projects/gnuwin32/files/sed/4.2.1/sed-4.2.1-dep.zip", $(Join-Path $destDir "bin\sed.exe")),
     @("http://sourceforge.net/projects/gnuwin32/files/sed/4.2.1/sed-4.2.1-bin.zip", $(Join-Path $destDir "bin\sed.exe")),
     @("http://sourceforge.net/projects/gnuwin32/files/tar/1.13-1/tar-1.13-1-dep.zip", $(Join-Path $destDir "bin\tar.exe")),
@@ -321,6 +344,8 @@ U-Setup-Archive `
 ###
 $env:TOOLBOX_HOME = $baseDir
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $env:TOOLBOX_HOME, [System.EnvironmentVariableTarget]::User)
+
+U-Print-PathEnv
 
 # カレントディレクトリを戻す
 Pop-Location
